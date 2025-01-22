@@ -1,0 +1,48 @@
+Git对象就是键值对，key是hash，value是文件。存到数据仓库里
+
+1.自定义一个个文件送到git数据库里，这只能存一个文件，不代表一个项目（也就不是一个快照了）
+当前操作都在本地数据库操作，不涉及暂存区
+git hash-object file名 -w  //将一个文件名转换成hash值存到object里
+git cat-file -p hash值——拿到对象内容
+git cat-file -t hash值——拿到对象类型
+
+2.树对象——允许将多个文件组织到一起，有暂存区的概念，代表项目的一个个版本
+
+git ls-files -s  //查看暂存区的命令
+git update-index --add --cacheinfo 100644  文件生成的hash名 暂存区的名字
+git write-tree——暂存区生成一个快照，放到object里。不会清空暂存区
+
+例： git update-index --add --cacheinfo 100644 e89670cdeb373258591ea3c7a0ed56b98589caa2 testzong //生成一个testzong暂存区
+
+高层命令：
+***git -add ./ 将当前路径下文件名 加到暂存区
+***git commit -m 注释 将暂存区提交到版本库
+git commit -a——跳过暂存步骤(但还是要add） 直接提交
+git对象 先到 版本库 再到暂存区
+
+git删了并没有删，而是更新
+重要的文件状态：未跟踪（没有add）， 跟踪的三状态——已暂存（add），已提交（commit）、已修改（modify）
+git status 看文件状态
+
+git log——查看提交日志（git log --oneline)
+git reflog
+回退功能：git reset --hard commitID
+git config --global alias.logall "log --all --graph --decorate --oneline"  //起别名，可以用git logall 查看最详细的日志记录
+若有些文件不希望被提交，可以新建一个gitignore文件放 不希望添加的文件名 （正则表达式）
+
+git diff（查看哪些没有暂存）
+git diff --cached ——查看更详细的状态（已暂存、未提交）
+——————————————————————————————————————————————————————————————————————
+
+团队协作——分支功能
+
+分支功能必须先提交！
+head 和 refs文件夹——跟分支有关 
+git branch——查看分支
+git branch 分支名——创建一个新分支
+git checkout 分支名——切换分支
+git checkout -b 分支名 ——创建分支并切换
+
+一般，有一个新功能/bug需改进，先创建一个新分支（做修改，add，commit操作），工作完成后 需加入主分支保存（先切换到master 然后使用merge命令，将
+之前的新分支名加入）。这样master就合并完成，可以将之前新分支给删除以节约空间（git branch -d 分支名）
+

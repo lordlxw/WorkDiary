@@ -1,0 +1,37 @@
+8.3
+董老师布置了一个需求：
+我做的WPF画面读ice接口调用的值展现在画面上。
+难点有：
+1）从小吴写的C++程序处读取ice接口
+2）多台终端同步显示
+3）是否要用到LMDB
+4）轧线画面跟踪
+
+08.16
+使用iceStorm进行订阅发布
+利用icebox进行基本配置
+创建config.sub 和 config.pub ，订阅者和发布者config中要设置相同的TopicManager.Proxy
+
+08.21
+配置config.sub 我发现如果要在本机测试必须写成localhost才行
+TopicManager.Proxy=DemoIceStorm/TopicManager:default -h localhost -p 5555
+
+8.24
+目前画面程序需要优化的点：
+1、日志（log4net)
+2、IceStorm服务必须开启，才能启动画面，能否优化
+3、一下子flush很多数据，如何处理
+4、画面间按键激励如何同步
+目前想法是：调用后台程序的接口，程序接口再触发事件同步，有一个问题是比如我激励了，别的程序是不是该是互锁状态，比如倒计时。
+
+8.29
+孔兄的界面
+需求：
+1、deviceitem 和 devicehistoricaldata 作关联筛选出 Name 以 Tablespace Usage 开头的数据加到另一张表空间增长表里
+
+2、方法就加在webApi的controllers中的deviceController中
+
+3、选每天最后的那条数据当作曲线的值
+
+8.30
+VS部分要修改的部分是zabbix的service接口定义及其实现以及控制器部分

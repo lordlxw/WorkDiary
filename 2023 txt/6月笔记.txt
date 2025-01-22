@@ -1,0 +1,53 @@
+6/2
+董老师又出差了
+我接下来的任务有3个：
+1、完善包捕获转发的工具，比如增加捕获和转发规则，转发包数据重连，返回ACK等
+2、轧制节奏画面看看能不能做出来
+3、BSE那边监控设计人员工作量考核，能否给出一个可行的方案
+
+
+6/6
+还是对BSE的项目不放弃
+董老师让我做对DXF文件的分析，来判断工作人员的工作量，难~
+
+6/7
+问题：服务器socket关闭，客户端为什么还能调用一次send？
+因为发送到的是缓冲区，缓冲区再发送给真正的服务器
+
+6/9
+wms程序修改，把每次更新所有数据，改为更新一个数据
+oracle删除数据库表的时候，记住不要一次性删除几万行，会导致数据库阻塞，删除操作可能需要较长时间才能完成，期间将锁定被删除的表，导致其他会话无法对该表进行读取或写入操作。这可能会导致其他查询和事务被阻塞，影响系统的整体性能和响应时间。
+空间管理问题：删除大量数据后，表所占用的空间不会立即释放回操作系统。数据库会将空间标记为可重用，但这需要后续的空间管理操作来进行处理。如果频繁进行大规模的删除操作，可能会导致数据库中存在大量的未使用空间，需要进行额外的维护工作来管理空间。
+
+6/21
+
+一个自定义控件的执行顺序
+先静态构造——普通构造——OnAppTemplate——Loaded
+总结ControlTemplate和DataTemplate的关系：
+
+ControlTemplate内有一个ContentPresenter属性，这个ContentPresenter的ContentTemplate就是DataTemplate类型。
+
+为什么OnAppTemplate不执行呢
+
+6/22
+记住，写自定义控件样式的时候，渲染操作一定要写在OnAppTemplate方法里而不是构造函数中
+OnAppTemplate已经对xaml代码初始化完成了，可以拿到控件了，也可以创建动画了
+ public override void OnApplyTemplate()
+        {
+            base.OnApplyTemplate();
+            //ItemsPanel = GetTemplateChild("ItemsPanel") as StackPanel;
+            ActiveBlock = GetTemplateChild("ActiveBlock") as Border;
+            ItemsContainer = GetTemplateChild("ItemsContainer") as Grid;
+
+            CreateAnimations();
+            Render();
+        }
+
+6/23
+一个应用程序你引入外部类库的资源样式时，语法如下：
+ <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/Modules.Core;component/Themes/Generic.xaml" />
+               
+            </ResourceDictionary.MergedDictionaries>
+Modules.Core为类库名
+注意：引用过后在应用程序本地使用StaticResource作为key值时不会有提示，但输入key值可以正常使用样式

@@ -1,0 +1,194 @@
+05.01
+两个nuget库
+①supersocket——长连接socket，tcp加表头用于防止粘包
+②MqttNet——基于WPF的通讯库
+
+05.02
+学习网络部分，ICMP\TCP\ARP协议 
+C# dispose和close的区别和共同点
+共同：都是释放资源
+不同：close后使用open可以再次打开资源（不清理），而dispose（继承Idisposable接口后要重新创建connection才行（因为资源被释放掉了）
+dispose是语法糖。C#中一般资源会被GC回收掉。但一些非托管资源不行（如windows窗口句柄，数据库链接，文件锁、socket等）需手动dispose。
+
+05.03
+粗粗看完了一本wireshark的书，对网络部分理解深了
+<>就是泛型 List<int> a = new List<int>; 是泛型约束
+
+05.04
+1.反射学习，C#编译时，类库会生成dll文件，应用会生成exe文件，metadata元数据是描述exe/dll的一个数据清单
+反射其实就是拿到metadata里的数据，用处：程序更新时，更新自己dll或使用别人的dll文件，就是拿到类、方法、特性、属性字段
+动态读取私有对象 
+哪些地方用到：MVC-ORM-IOC-AOP
+Assembly.Load，反射需要打完整的方法名
+通过反射 可以用简便的泛型+反射+lambda的方式调用sql语句。
+
+2.特性经常在MVC中使用，用于数据限制与验证
+
+05.05
+1.开会，这周目标是整出个图表，还有socket部分的压力测试。
+2.继续学习操作系统，有点难度。
+
+05.06
+1.userid设定为主键
+2.登录时最好也用个task，防止窗体假死
+3.button回车键 可以利用isdefault=“true”
+4.初始界面光标绑定 可以利用grid的focusmanager.focusedelement={bind elementname="比如textbox名"},光标即可定位到该textbox上
+
+05.07
+1.利用datatrigger可以设置 水印，当有文字时候textblock就collapsed ，没有就显示（visibility）
+2.装了个PLC仿真，注意 虚拟网卡要和设置的服务器ip在同一网段 
+
+05.08
+1.Panuon.UI.Silver控件库也不错，可以设置登录时等待效果，美化界面。
+2.在xaml处写故事板，可以在partial类中引用
+如： Storyboard stdStart;
+        stdStart = (Storyboard)this.Resources["start"]; //调用故事板中key为start的故事板
+
+05.09
+1.一个按键控制click事件，按一次暂停，按两次继续，可以利用一个静态变量记录次数，利用到button的tag属性计数
+2.异步多线程暂停，再继续，
+CancellationTokenSource tokenSource = new CancellationTokenSource();
+ CancellationToken token = tokenSource.Token;
+ ManualResetEvent resetEvent = new ManualResetEvent(true);
+
+Task task = new Task(async () => {
+    while (true) {  
+        if (token.IsCancellationRequested) {
+            return;
+        }
+        
+        // 初始化为true时执行WaitOne不阻塞
+        resetEvent.WaitOne();
+
+
+        // Doing something.......
+        
+        // 模拟等待100ms
+        await Task.Delay(100);
+    }
+
+
+}, token);
+
+
+task.Start(); 
+
+
+resetEvent.Reset();//暂停task   resetEvent.Set(); //继续task  tokenSource.Cancel();//取消task
+Task和Thread的区别在于 task可以阻塞（其他基本一样）
+
+05.11
+1.Process.Start方法可以开启一个进程—— Process.Start(Assembly.GetExecutingAssembly().GetName().CodeBase); //关闭主窗口时同时启动登录窗口
+也可以调用别的进程，例如：System.Diagnostics.Process.Start(@"D:\Program Files\Tencent\QQ\Bin\QQ.exe");  //打开qq
+
+05.12
+不知道看什么了，计组、计网、汇编 一起混着学把
+
+05.13
+董老师，布置学习git，更好管理代码
+
+05.14
+看完git了，用于管理代码，可以找到历史版本。主要分两类。本地和远程
+本地三大块：工作目录，暂存区，提交（commit）完的历史记录（本质就是树）
+最重要的命令： add /commit /log/reset        branch/merge/checkout
+
+05.16、17
+ice学习，ice就是一中间件，负责C端到S端的通信，省去如何通信，只提供接口，利用.ice文件。
+
+05.18
+1.WPF好用控件库：aduskin、modernwpf、花木兰5.0、handycontrol
+2.多用库，速度会变慢，可以
+3.WPF 引入了一个非常方便的概念：将数据存储为资源，可以在本地用于控件，在本地用于整个窗口，也可以用于整个应用程序的全局。数据几乎可以是您想要的任何内容，从实际信息到 WPF 控件的层次结构。这允许您将数据放在一个地方，然后从或其他几个地方使用它，这非常有用。
+如：获取resource里的storyboard
+
+05.19
+1.感觉自己WPF画面卡顿，需要优化。
+
+05.20
+1.如果将数据全放在一页，那么数据项多时，滚动条会卡顿，要利用虚拟化技术
+可在控件中使用：ScrollViewer.CanContentScroll="True" VirtualizingPanel.IsVirtualizing="True"
+2.WPF模板有三种：ControlTemplate、DataTemplate和ItemsPanelTemplate，它们都继承自FrameworkTemplate抽象类。在这个抽象类中有一个FrameworkElementFactory类型的VisualTree变量，通过该变量可以设置或者获取模板的根节点，包含了你想要的外观元素树。
+https://blog.csdn.net/weixin_30855761/article/details/97055229
+3.TemplatePart机制（特性）
+TemplatePart机制是某些WPF控件，如ProgressBar等，通过内建的逻辑来控制控件行为的方式。
+
+05.22
+1.类之间可以互相传递调用，直接传递this即可
+
+
+05.23
+1.VS调试技巧，条件可以根据表达式（设置I值），多线程调试时也可以设置（ThreadId=3）使其在某个固定线程调试
+2.聊天室项目，使用Settings来保存登录的用户信息，在Properties.Settings里写属性
+  [global::System.Configuration.UserScopedSettingAttribute()]          //标识该字段值不能重复
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]	//标识不属于应用程序的代码
+        [global::System.Configuration.DefaultSettingValueAttribute("")]	//标识属性的默认值
+        public string Username {
+            get {
+                return ((string)(this["Username"]));
+            }
+            set {
+                this["Username"] = value;
+            }
+        }
+
+
+
+05.24
+1.C#回调函数
+2.ICloneable接口
+3.Environment 类
+可以获得和用户环境相关的值，包括线程号、用户名、系统目录等值
+4.Application类
+在 WPF 中绝大部分控件都继承自 DispatcherObject，甚至包括 Application。
+WPF中的application相当于console里的program——主程序
+this.dispather.invoke(Action);//多线程调用委托
+5.ObjectDataProvider类
+通过这个类，可以获取资源。
+ //通过反射分别或许用户列表信息和聊天信息
+类：
+            ObjectDataProvider odp = (ObjectDataProvider)_app.Resources["UserList"];
+            _users = (UserList)odp.Data;
+            odp = (ObjectDataProvider)_app.Resources["ChatModel"];
+            _model = (ChatModel)odp.Data;
+xaml代码（需要引用chat命名空间）
+   <ObjectDataProvider ObjectType="{x:Type chat:ChatModel}" x:Key="ChatModel">
+        </ObjectDataProvider>
+   <ObjectDataProvider ObjectType="{x:Type chat:UserList}" x:Key="UserList">
+        </ObjectDataProvider>
+
+6.Settings属性（可用作记录登录信息，直接设置表，会自动生成字段）
+在程序中读取参数
+使用Properties.Settings.Default.参数名 读取参数值
+在程序中保存参数
+使用Properties.Settings.Default[“参数名”] =参数值保存参数，最后save()
+7.Textblock的Run属性
+
+05.25
+1.Mysql安装 运行，增删改查 基于Mysql.Data
+
+05.26
+1.Linq学习：IQueryable继承IEnumerable
+C#扩展方法：必须是静态类才可以添加扩展方法
+Linq to object——内存里的数据     Linq to sql——查询数据库    Linq to Xml——查询XML文件
+var list1 = StudentsList.Where(x => x.Age<20);
+var list2=(from s in StudentsList where s.Age<20 select s).ToList();
+
+2.Mysql
+public DataTable ExportToDataTable(string sql)  //返回DataSet对象
+    {
+		ConnectionDB();
+        DataTable dt = new DataTable();
+        MySqlDataAdapter da = new MySqlDataAdapter(sql, connection);
+        da.Fill(dt);
+	}
+
+晚上父亲走丢了，还好封城了，财大门口找到了。
+
+
+05.28
+1.C#多线程学习
+2.单元测试
+
+05.31
+1.要解封了，有点害怕日后的工作
+2.System.Guid.NewGuid()——生成一个不重复的32随机数，常用于数据库主键
