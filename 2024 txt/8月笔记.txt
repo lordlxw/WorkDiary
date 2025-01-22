@@ -1,0 +1,106 @@
+08.01
+由于聊天记录只能保存当天的
+我想做一个守护进程来拉-placeorderServer程序 和 企点程序
+但是好像遇到点困难
+每天晚上10.00 自动关闭，然后自动登录
+但是发现会存在一个QQ验证的问题，破解不了啊
+
+第一次下了postman 调试接口
+还是挺好用的！
+
+8.2
+现在程序挺稳定的了，很开心
+
+但是还是要做处理，我的想法是
+1、抓取服务端，抓取工作进行到晚上十点，关闭抓取服务
+然后10.10分清屏聊天数据。关闭程序
+
+2、guard程序每天守护服务端程序（每天早上6点开启，监听服务端到晚上9.50分）---永远不关闭
+
+08.05
+周一咯，还行
+老板没说啥，毕竟把能做的都完成了
+发送和捕获消息基本没问题
+就是捕获的时候 如果发送频率过高会出现没抓取到的可能。
+
+修复了 一人下单 零一人中介未锁定的问题。
+
+08.06
+终于找到为什么底下有边框了
+  TotalSummaryPosition="None"
+ShowTotalSummary="False"
+要这么设置就行 <dxg:GridControl.View>
+     <dxg:TableView > 在tableView里面设置
+
+08.08
+这b老板又来找茬了
+奶奶的 真的脑残
+
+今天完成的有
+1、收藏功能
+2、显示浮盈的bug
+3、devexpress选中框功能
+
+08.13
+改了挺多东西的
+1、Tick图界面
+2、关闭自动保存所有窗体
+
+债券最近 国家一直管控，不让随便买卖了，必须有桥。
+
+08.14
+钟老师今日说法：浮盈 可以隔夜，浮亏 不可以隔夜
+
+下单了超过15分钟，中介没有回复，就锁住
+
+2分钟 下单没有回复，追问——“挂上了吗”
+2分钟 改价没有回复，追问——“改成了吗”
+
+撤单了 10秒不回自动撤 又改了？？？ 好像又没问题了
+
+
+08.22
+查了半天为什么devexpress gridcontrol 为什么没绑定到属性
+ <dxg:GridColumn Header="相关询价单据号11">
+     <dxg:GridColumn.CellTemplate>
+         <DataTemplate>
+一定要加上RowData.Row
+ <!--<TextBlock Text="{Binding RowData.Row.TradeIdsString}" />-->
+
+打算完善一下服务端（如果不想每天早起重开的话）
+已知消息：
+①每天早上7点到晚上8点。服务端会强平，意味着我的服务端必须开启
+②Token过期是24小时，这点可以不考虑，因为会重启
+
+所以我要实现的是：
+①、每天晚上9点，先清屏再重启。
+②、守护程序，检测到关闭了就拉起来。
+
+08.26
+1、感觉bug越改越多了md...
+目前 还未实现的是询价单的主从显示，询价单也有children的。
+看看用原生的如何实现吧 好像和rowsdetail有关系。
+
+08.28
+发现确实会有websocket断连的问题
+很奇怪，和刘老师的就会断连
+和我自己服务端连接就不会
+
+今天改了两个重连的地方
+一个是orderlistviewmodel，最重要的重连的部分
+第二个是龙虎榜，也会出现断连lily的情况
+都要进行重新连接。
+
+08.29
+感觉要加个功能，只保留最近一周的日志文件，清除其他的。
+
+08.30
+需要增加控件单击全选功能，
+stackoverflow就是好用！异步，问题是在于
+异步调用 Dispatcher 时，委托不会立即执行，而是在从 Dispatcher 队列中清除所有先前入队的操作（如内部事件处理程序）后排队并执行。
+private async void SelectAll_OnTextBoxGotFocus(object sender, RoutedEventArgs e)
+{
+  var textBox = sender as TextBox;
+  await Application.Current.Dispatcher.InvokeAsync(textBox.SelectAll, DispatcherPriority.Background);
+}
+这样子就能实现——单击全选了

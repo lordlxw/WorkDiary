@@ -1,0 +1,129 @@
+11.1
+周五，也是搬到青浦后的第一个工作日
+台风日-康妮
+在家办公算了，头大
+昨天来回折腾3个多小时，不知道天天这样子会怎么样。
+争取能坚持到过年吧
+
+
+11.7
+这个装的ip-guard是真傻逼啊
+复制最多1000个字符
+
+新增了一个 
+中介禁用逻辑
+
+禁用和占用-优先禁用UI显示，禁用为true-显示UI的样式
+
+11.15
+好久没写笔记了，周五没啥事来总结一下
+感觉我的任务还是蛮轻松的，吴老师对我还不错，工时啥的凑凑就行
+
+最近在看吴老师的服务代码
+核心其实就是跑服务：
+WindService
+LilyService
+他做的是worker service 然后封装成了window service 
+
+1、打包成服务需要nuget——Microsoft.Extensions.Hosting.WindowsServices
+
+部署的话，如果有devops，可以在此处创建一个流程自动完成
+若无，传统方式，则是右键发布到一个文件夹
+
+2、Powershell下开启服务
+PS C:\Windows\system32> sc.exe create WebSite_WorkerService binpath= C:\Users\user\Desktop\发布\WebSite_WorkerService.exe start= auto
+[SC] CreateService 成功
+
+3、删除服务
+sc.exe delete WebSite_WorkerService
+记住一定要加.exe 表示这个不是快捷方式
+
+11.16
+周末学习了一下
+以防冷启动，其实并不需要多开一个线程去处理，直接利用async await 可能更好
+异步并不能缩短程序运行时间，只能提高响应速度
+如果想缩短运行时间，需要引入并行执行的概念。
+
+
+
+ConfigureAwait 在 C# 异步模型中的作用
+在 C# 的异步编程中，ConfigureAwait 是一个常用的方法，它影响 await 的行为，主要用于 控制任务完成后是否需要恢复到原始上下文（例如 UI 线程或同步上下文）。
+
+语法
+csharp
+复制代码
+await someTask.ConfigureAwait(false);
+背景
+在 async 和 await 中，默认情况下，当 await 一个任务时，控制权会回到调用 await 之前的上下文，比如：
+
+在 WPF 和 WinForms 中，默认会返回到 UI 线程。
+在 ASP.NET 中，会返回到请求上下文。
+这种行为可以确保任务完成后，继续执行的代码能够访问上下文相关的资源（例如 UI 控件或 HTTP 请求信息）。
+
+ConfigureAwait(false) 的作用
+ConfigureAwait(false) 告诉编译器 不需要恢复到原始上下文。也就是说，任务完成后，可以在线程池中的任意线程上继续执行，而不是返回到原来的上下文。
+
+使用场景
+性能优化：
+
+避免不必要的上下文切换。
+在后台任务、非 UI 操作中，恢复上下文没有意义，ConfigureAwait(false) 可以提高性能。
+后台任务：
+
+在 ASP.NET 或后台服务中，你通常不需要恢复到特定的同步上下文。
+库开发：
+
+编写库时，建议使用 ConfigureAwait(false) 以确保库的调用者不会因为上下文切换而出现性能问题。
+示例代码
+没有 ConfigureAwait（默认行为）：
+
+csharp
+复制代码
+async Task ExampleAsync()
+{
+    Console.WriteLine($"Before await: {Thread.CurrentThread.ManagedThreadId}");
+    await Task.Delay(1000); // 默认会恢复到原始上下文
+    Console.WriteLine($"After await: {Thread.CurrentThread.ManagedThreadId}");
+}
+使用 ConfigureAwait(false)：
+
+csharp
+复制代码
+async Task ExampleAsync()
+{
+    Console.WriteLine($"Before await: {Thread.CurrentThread.ManagedThreadId}");
+    await Task.Delay(1000).ConfigureAwait(false); // 不恢复到原始上下文
+    Console.WriteLine($"After await: {Thread.CurrentThread.ManagedThreadId}");
+}
+输出对比（假设初始线程 ID 为 1）
+没有 ConfigureAwait(false):
+
+csharp
+复制代码
+Before await: 1
+After await: 1
+使用 ConfigureAwait(false):
+
+csharp
+复制代码
+Before await: 1
+After await: 5 (可能是线程池中的某个线程)
+
+
+*** UI Thread——ConfigAwait(true)
+*** 类库——ConfigAwait(false)  不用切换上下文，消耗性能。
+
+11.17
+周日，联系人送到护理院去了，还行
+希望能熬过这一个冬天。
+夏天再接出来吧
+
+11.22-11.24
+常兄来上海了
+md连续两天的演唱会，快疯了，累死。我抢的位置确实很不错。
+请他们吃了三顿饭吧，烧烤、浙菜还有一家德式餐厅。
+
+24晚还上了stayreal的船，拍了些照片留作纪念。胖了好多hh
+晚上坐8号线回家，前边站着个短发姑娘，正在微信上搜索听学友的歌，令人在意的是 她竟然用的是有线耳机（iphone7那种）很神奇
+想如果她也在虹足下就要个联系方式的，可惜，一旦错过就不在。
+
